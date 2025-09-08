@@ -1,4 +1,4 @@
-name: Docker Build
+name: Docker Matrix Build
 
 on:
   workflow_dispatch:
@@ -15,17 +15,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        build:
-        # - {latest: "false", python: "3.10", venv: "python_310", cuda: "12.9.1-base"}
-        # - {latest: "false", python: "3.10", venv: "python_310", cuda: "12.9.1-cudnn-runtime"}
-        # - {latest: "false", python: "3.10", venv: "python_310", cuda: "12.9.1-cudnn-devel"}
-        - {latest: "false", python: "3.10", venv: "python_310", cuda: "13.0.0-base"}
-        - {latest: "false", python: "3.11", venv: "python_311", cuda: "13.0.0-base"}
-        - {latest: "false", python: "3.12", venv: "python_312", cuda: "13.0.0-base"}
-        - {latest: "false", python: "3.13", venv: "python_313", cuda: "13.0.0-base"}
-        - {latest: "false", python: "3.14", venv: "python_314", cuda: "13.0.0-base"}
-        # - {latest: "false", python: "3.10", venv: "python_310", cuda: "13.0.0-cudnn-runtime"}
-        # - {latest: "false", python: "3.10", venv: "python_310", cuda: "13.0.0-cudnn-devel"}
+        latest:
+          - false
+        python:
+          - "3.10"
+          - 3.11
+        cuda:
+          - 13.0.0-base
+          - 12.9.1-base
+          - 12.8.1-base
+        include:
+          - venv: python_310
+            python: 3.10
+          - venv: python_311
+            python: 3.11
         
     steps:
       -
@@ -64,9 +67,9 @@ jobs:
         name: Set tags
         run: |
           img_path_ghcr="ghcr.io/${{ env.REPO_NAMESPACE }}/${{ env.REPO_NAME }}"
-          base_tag="${{ matrix.build.python }}-v2-cuda-${{ matrix.build.cuda }}-${{ env.UBUNTU_VERSION }}"
+          base_tag="${{ matrix.python }}-v2-cuda-${{ matrix.cuda }}-${{ env.UBUNTU_VERSION }}"
 
-          if [[ ${{ matrix.build.latest }} == "true" ]]; then
+          if [[ ${{ matrix.latest }} == "true" ]]; then
               echo "Marking latest"
               # GHCR.io Tags
               TAGS="${img_path_ghcr}:${base_tag}, ${img_path_ghcr}:latest-cuda, ${img_path_ghcr}:latest"
@@ -80,9 +83,9 @@ jobs:
         with:
           context: build
           build-args: |
-            IMAGE_BASE=ghcr.io/kosteva/ai-dock-base-image:v2-cuda-${{ matrix.build.cuda }}-${{ env.UBUNTU_VERSION }}
-            PYTHON_VERSION=${{ matrix.build.python }}
-            PYTHON_VENV_NAME=${{ matrix.build.venv }}
+            IMAGE_BASE=ghcr.io/kosteva/ai-dock-base-image:v2-cuda-${{ matrix.cuda }}-${{ env.UBUNTU_VERSION }}
+            PYTHON_VERSION=${{ matrix.python }}
+            PYTHON_VENV_NAME=${{ matrix.venv }}
           push: true
           provenance: false
           tags: ${{ env.TAGS }}
