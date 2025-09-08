@@ -21,9 +21,13 @@ jobs:
           - "3.10"
           - 3.11
         cuda:
-          - 13.0.0-base
-          - 12.9.1-base
-          - 12.8.1-base
+          - 13.0.0
+          - 12.9.1
+          - 12.8.1
+        level:
+          - base
+          - runtime
+          - devel
         include:
           - venv: python_310
             python: 3.10
@@ -67,7 +71,7 @@ jobs:
         name: Set tags
         run: |
           img_path_ghcr="ghcr.io/${{ env.REPO_NAMESPACE }}/${{ env.REPO_NAME }}"
-          base_tag="${{ matrix.python }}-v2-cuda-${{ matrix.cuda }}-${{ env.UBUNTU_VERSION }}"
+          base_tag="${{ matrix.python }}-v2-cuda-${{ matrix.cuda }}-${{ matrix.level }}-${{ env.UBUNTU_VERSION }}"
 
           if [[ ${{ matrix.latest }} == "true" ]]; then
               echo "Marking latest"
@@ -83,7 +87,7 @@ jobs:
         with:
           context: build
           build-args: |
-            IMAGE_BASE=ghcr.io/kosteva/ai-dock-base-image:v2-cuda-${{ matrix.cuda }}-${{ env.UBUNTU_VERSION }}
+            IMAGE_BASE=ghcr.io/kosteva/ai-dock-base-image:v2-cuda-${{ matrix.cuda }}-${{ matrix.level }}-${{ env.UBUNTU_VERSION }}
             PYTHON_VERSION=${{ matrix.python }}
             PYTHON_VENV_NAME=${{ matrix.venv }}
           push: true
