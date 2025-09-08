@@ -16,10 +16,14 @@ jobs:
       fail-fast: false
       matrix:
         build:
-        - {latest: "false", python: "3.10", venv: "python_310", cuda: "12.9.1-base"}
+        # - {latest: "false", python: "3.10", venv: "python_310", cuda: "12.9.1-base"}
         # - {latest: "false", python: "3.10", venv: "python_310", cuda: "12.9.1-cudnn-runtime"}
         # - {latest: "false", python: "3.10", venv: "python_310", cuda: "12.9.1-cudnn-devel"}
         - {latest: "false", python: "3.10", venv: "python_310", cuda: "13.0.0-base"}
+        - {latest: "false", python: "3.11", venv: "python_311", cuda: "13.0.0-base"}
+        - {latest: "false", python: "3.12", venv: "python_312", cuda: "13.0.0-base"}
+        - {latest: "false", python: "3.13", venv: "python_313", cuda: "13.0.0-base"}
+        - {latest: "false", python: "3.14", venv: "python_314", cuda: "13.0.0-base"}
         # - {latest: "false", python: "3.10", venv: "python_310", cuda: "13.0.0-cudnn-runtime"}
         # - {latest: "false", python: "3.10", venv: "python_310", cuda: "13.0.0-cudnn-devel"}
         
